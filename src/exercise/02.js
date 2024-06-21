@@ -1,32 +1,21 @@
+import React from "react";
 import styled from "styled-components";
-import React, { useEffect, useState } from "react";
-
-/* ✅ modify this usePokemon custom hook to take in a query as an argument */
-export function usePokemon() {
-  /* ✅ this hook should only return one thing: an object with the pokemon data */
-}
+import { usePokemon } from "./usePokemon";
 
 function Pokemon({ query }) {
-  /* 
-   ✅ move the code from the useState and useEffect hooks into the usePokemon hook
-   then, call the usePokemon hook to access the pokemon data in this component
-  */
-  const [pokemon, setPokemon] = useState(null);
-  useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
-      .then(r => r.json())
-      .then(setPokemon);
-  }, [query]);
+  /* ✅ call the usePokemon hook to access the pokemon data in this component */
+  const { data: pokemon, status, error } = usePokemon(query);
 
-  // 🚫 don't worry about the code below here, you shouldn't have to touch it
-  if (!pokemon) return <h3>Loading...</h3>;
+  if (status === "pending") return <h3>Loading...</h3>;
+  if (status === "rejected") return <h3>Error: {error}</h3>;
+  if (!pokemon) return null;
 
   return (
     <div>
       <h3>{pokemon.name}</h3>
       <img
         src={pokemon.sprites.front_default}
-        alt={pokemon.name + " front sprite"}
+        alt={`${pokemon.name} front sprite`}
       />
     </div>
   );
